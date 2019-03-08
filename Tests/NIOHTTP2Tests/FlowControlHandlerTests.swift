@@ -440,6 +440,29 @@ class FlowControlHandlerTests: XCTestCase {
 
         XCTAssertNoThrow(try self.channel.finish())
     }
+
+    func testChangingStreamWindowSizeToZeroAndBack() {
+        // This test checks that updating the window size to zero on a flushable stream makes it no longer flushable.
+        let streamOne = HTTP2StreamID(1)
+        self.channel.createStream(streamOne, initialWindowSize: 0)
+
+        let writePromise = self.makeWritePromise()
+        let writtenBuffer = self.channel.writeDataFrame(streamOne, byteBufferSize: 15, promise: writePromise)
+        // The stream has data to write but the window size is zero, so it won't write.
+        self.channel.flush()
+
+        self.channel.updateStreamWindowSize(streamOne, newWindowSize: 15)
+        self.channel.updateStreamWindowSize(streamOne, newWindowSize: 0)
+        self.channel.updateStreamWindowSize(streamOne, newWindowSize: 15)
+
+        self.channel.flush()
+
+        let receivedFrames = self.receivedFrames()
+        XCTAssertEqual(1, receivedFrames.count)
+        receivedFrames[0].assertDataFrame(endStream: false, streamID: streamOne, payload: writtenBuffer)
+
+        XCTAssertNoThrow(try self.channel.finish())
+    }
 }
 
 

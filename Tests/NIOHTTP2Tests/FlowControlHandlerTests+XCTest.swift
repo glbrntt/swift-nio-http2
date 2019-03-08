@@ -37,6 +37,7 @@ extension FlowControlHandlerTests {
                 ("testWritesForUnknownStreamsFail", testWritesForUnknownStreamsFail),
                 ("testOverlargeFramesAreSplitOnMaxFrameSizeByteBuffer", testOverlargeFramesAreSplitOnMaxFrameSizeByteBuffer),
                 ("testOverlargeFramesAreSplitOnMaxFrameSizeFileRegion", testOverlargeFramesAreSplitOnMaxFrameSizeFileRegion),
+                ("testChangingStreamWindowSizeToZeroAndBack", testChangingStreamWindowSizeToZeroAndBack),
            ]
    }
 }

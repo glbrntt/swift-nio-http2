@@ -161,6 +161,9 @@ public class NIOHTTP2FlowControlHandler: ChannelDuplexHandler {
                 if $0.hasPendingData && !hadData {
                     assert(!self.flushableStreams.contains($0.streamID))
                     self.flushableStreams.insert($0.streamID)
+                } else if !$0.hasPendingData && hadData {
+                    assert(self.flushableStreams.contains($0.streamID))
+                    self.flushableStreams.remove($0.streamID)
                 }
             }
         }
